@@ -1,8 +1,17 @@
 import React from 'react';
 import { useEffect } from 'react';
+import './app.css';
+import SearchIcon from './search.svg';
 
 //const Api_Url ='http://www.omdbapi.com?apikey=ac280c84';
 const API='https://online-movie-database.p.rapidapi.com/auto-complete?'
+const movie1={
+	"Title": "Amazing Spiderman Syndrome",
+	"Year" : "2012",
+	"imdbID":"ss",
+	"Type": "movie",
+	"Poster":"N/A",
+}
 const App = () => {
 	const searchMovies = async(title)=>{
 		const options = {
@@ -23,11 +32,41 @@ const App = () => {
 		}
 
 	useEffect(()=> {
-		searchMovies('dave');
+		searchMovies('spiderman');
 
 	},[]);
 		return (
-		<h2>helloo there </h2>
+		<div className="app">
+			<hl>Movie Madness</hl>
+			<div className='search'>
+				<input placeholder="search movie"
+				value="spiderman"
+				onChange={()=>{}}
+				/>
+				<img
+				src={SearchIcon}
+				alt="search"
+				/>
+
+			</div>
+
+			<div className="container">
+				<div className='movie'>
+					<div>
+						<p>{movie1.Year}</p>
+					</div>
+					<div>
+						<img src= {movie1.Poster!== 'N/A' ?
+						 movie1.poster :
+						  'https://via.placeholder.com/400' } alt={movie1.title}/>
+
+					</div>
+				</div>
+
+			</div>
+
+		</div>
+
 
 	);
 }
