@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from "react";
 import MovieCard from "./MovieCard";
 import "./app.css";
+
+import { createContext } from "react";
+import * as ReactBootStrap from "react-bootstrap";
+import ReactSwitch from "react-switch";
+//import { trackPromise } from 'react-promise-tracker';
 import SearchIcon from "./search.svg";
 //import ClipLoader from "react-spinners/ClipLoader";
 //const Api_Url ='http://www.omdbapi.com?apikey=ac280c84';
@@ -17,7 +22,7 @@ const API = "https://online-movie-database.p.rapidapi.com/auto-complete?";
 //.then(response => response.json())
 //.then(response => console.log(response))
 //.catch(err => console.error(err));
-
+const ThemeContext = createContext(null);
 const App = () => {
   // const [loading, setLoading] = useState(false);
   // useEffect(() => {
@@ -36,6 +41,7 @@ const App = () => {
 
   const [movies, setMovies] = useState([]);
   const [searchItem, setSearchItem] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const searchMovies = async (title) => {
     console.log(title);
@@ -49,6 +55,7 @@ const App = () => {
     const response = await fetch(`${API}&q=${title}`, options);
     const data = await response.json();
     setMovies(data.d);
+    setLoading(true);
     console.log(data);
   };
 
@@ -58,40 +65,58 @@ const App = () => {
     };
     fetchMovies();
   }, []);
+  const [theme, setTheme] = useState("dark");
+  const toggleTheme = () => {
+    setTheme((curr) => (curr === "light" ? "dark" : "light"));
+  };
 
   return (
-    <div className="app">
-      <h1>Movie Madness</h1>
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          searchMovies(searchItem);
-        }}
-        className="search"
-      >
-        <input
-          placeholder="search movie"
-          value={searchItem}
-          onChange={(e) => setSearchItem(e.target.value)}
-        />
-        <img
-          src={SearchIcon}
-          alt="search"
-          onClick={() => searchMovies(searchItem)}
-        />
-      </form>{" "}
-      {movies?.length > 0 ? (
-        <div className="container">
-          {movies.map((movie) => {
-            return <MovieCard key={movie.id} movie={movie} />;
-          })}
+    <ThemeContext.Provider value={(theme, toggleTheme)}>
+      <div className="app" id={theme}>
+        <div className="flipSwitch">
+          <label>{theme === "light" ? "Light Mode" : "Dark Mode"}</label>
+          <ReactSwitch onChange={toggleTheme} checked={theme === "dark"} />
         </div>
-      ) : (
-        <div className="empty">
-          <h2> No movies found</h2>
-        </div>
-      )}
-    </div>
+        <h1>Movie Madness</h1>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            searchMovies(searchItem);
+          }}
+          className="search"
+        >
+          <input
+            placeholder="search movie"
+            value={searchItem}
+            onChange={(e) => setSearchItem(e.target.value)}
+          />
+
+          <img
+            src={SearchIcon}
+            alt="search"
+            onClick={() =>
+              loading ? (
+                searchMovies(searchItem)
+              ) : (
+                <ReactBootStrap.Spinner animation="border" variant="primary" />
+              )
+            }
+          />
+        </form>
+
+        {movies?.length > 0 ? (
+          <div className="container">
+            {movies.map((movie) => {
+              return <MovieCard key={movie.id} movie={movie} />;
+            })}
+          </div>
+        ) : (
+          <div className="empty">
+            <h2> No movies found</h2>
+          </div>
+        )}
+      </div>
+    </ThemeContext.Provider>
   );
 };
 
