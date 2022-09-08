@@ -7,6 +7,7 @@ import * as ReactBootStrap from "react-bootstrap";
 import ReactSwitch from "react-switch";
 //import { trackPromise } from 'react-promise-tracker';
 import SearchIcon from "./search.svg";
+//require("dotenv").config();
 //import ClipLoader from "react-spinners/ClipLoader";
 //const Api_Url ='http://www.omdbapi.com?apikey=ac280c84';
 const API = "https://online-movie-database.p.rapidapi.com/auto-complete?";
@@ -42,14 +43,16 @@ const App = () => {
   const [movies, setMovies] = useState([]);
   const [searchItem, setSearchItem] = useState("");
   const [loading, setLoading] = useState(false);
+  const apiKey = process.env.REACT_APP_MOVIE_API_KEY;
+  const apiHub = process.env.REACT_APP_MOVIE_API_HUB;
 
   const searchMovies = async (title) => {
     console.log(title);
     const options = {
       method: "GET",
       headers: {
-        "X-RapidAPI-Key": "05090b85a3msh9fa7bba9dbeb353p17dc13jsna6e9e7d2b297",
-        "X-RapidAPI-Host": "online-movie-database.p.rapidapi.com",
+        "X-RapidAPI-Key": apiKey,
+        "X-RapidAPI-Host": apiHub,
       },
     };
     const response = await fetch(`${API}&q=${title}`, options);
